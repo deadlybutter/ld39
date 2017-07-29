@@ -60,46 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _Game = __webpack_require__(1);
-
-var _Game2 = _interopRequireDefault(_Game);
-
-var _Cell = __webpack_require__(7);
-
-var _Cell2 = _interopRequireDefault(_Cell);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var game = new _Game2.default();
-window.startGame = game.start;
-
-var test = new _Cell2.default(200, 200, 1);
-game.addEntity(test);
-
-setInterval(function () {
-  test.addEnergy(.2);
-}, 500);
-
-// setInterval(() => {
-//   for (var i = 0; i < 20; i++) {
-//     game.particleManager.makeParticle(Math.random() * 100, Math.random() * 100, 1000 + (Math.random() * 2000), 'test');
-//   }
-//
-//   // console.log(game.particleManager.particles.length);
-// }, 500);
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -111,7 +76,150 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _ParticleManager = __webpack_require__(2);
+var _helpers = __webpack_require__(1);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Entity = function () {
+  function Entity(x, y) {
+    _classCallCheck(this, Entity);
+
+    this.x = x;
+    this.y = y;
+
+    this.id = (0, _helpers.guid)();
+  }
+
+  _createClass(Entity, [{
+    key: 'update',
+    value: function update(game) {
+      return;
+    }
+  }, {
+    key: 'draw',
+    value: function draw(ctx) {
+      return;
+    }
+  }]);
+
+  return Entity;
+}();
+
+exports.default = Entity;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.guid = guid;
+exports.mapTeamToFillColor = mapTeamToFillColor;
+exports.mapTeamToBorderColor = mapTeamToBorderColor;
+exports.clamp = clamp;
+exports.getRandomInt = getRandomInt;
+exports.getRandomVelocity = getRandomVelocity;
+exports.otherTeam = otherTeam;
+exports.mag = mag;
+exports.normalize = normalize;
+// Generate a random GUID.
+// @see https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+//
+// @return String
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+function mapTeamToFillColor(team) {
+  return parseInt(team) === 1 ? '#0074D9' : '#111';
+}
+
+function mapTeamToBorderColor(team) {
+  return parseInt(team) === 1 ? '#7FDBFF' : '#01FF70';
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomVelocity() {
+  return { x: getRandomInt(-1, 1), y: getRandomInt(-1, 1) };
+}
+
+function otherTeam(team) {
+  return parseInt(team) === 1 ? 2 : 1;
+}
+
+function mag(vec) {
+  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
+function normalize(vec) {
+  var m = mag(vec);
+  return { x: vec.x / m, y: vec.y / m };
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _Game = __webpack_require__(3);
+
+var _Game2 = _interopRequireDefault(_Game);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var game = new _Game2.default();
+window.startGame = game.start;
+
+// import Cell from './entities/Cell';
+// import Proton from './entities/Proton';
+// const test = new Cell(10, 10, 1);
+// game.addEntity(test);
+//
+// const testProton = new Proton(500, 440, 1, test);
+// game.addEntity(testProton);
+
+// setInterval(() => {
+//   test.addEnergy(.2);
+// }, 500);
+
+// setInterval(() => {
+//   for (var i = 0; i < 20; i++) {
+//     game.particleManager.makeParticle(Math.random() * 100, Math.random() * 100, 1000 + (Math.random() * 2000), 'test');
+//   }
+//
+//   // console.log(game.particleManager.particles.length);
+// }, 500);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ParticleManager = __webpack_require__(4);
 
 var _ParticleManager2 = _interopRequireDefault(_ParticleManager);
 
@@ -227,7 +335,7 @@ var Game = function () {
 exports.default = Game;
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -239,7 +347,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Particle = __webpack_require__(3);
+var _Particle = __webpack_require__(5);
 
 var _Particle2 = _interopRequireDefault(_Particle);
 
@@ -332,7 +440,7 @@ var ParticleManager = function () {
 exports.default = ParticleManager;
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -344,7 +452,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Entity2 = __webpack_require__(4);
+var _Entity2 = __webpack_require__(0);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
@@ -411,102 +519,6 @@ var Particle = function (_Entity) {
 exports.default = Particle;
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _helpers = __webpack_require__(5);
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Entity = function () {
-  function Entity(x, y) {
-    _classCallCheck(this, Entity);
-
-    this.x = x;
-    this.y = y;
-
-    this.id = (0, _helpers.guid)();
-  }
-
-  _createClass(Entity, [{
-    key: 'update',
-    value: function update(game) {
-      return;
-    }
-  }, {
-    key: 'draw',
-    value: function draw(ctx) {
-      return;
-    }
-  }]);
-
-  return Entity;
-}();
-
-exports.default = Entity;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.guid = guid;
-exports.mapTeamToFillColor = mapTeamToFillColor;
-exports.mapTeamToBorderColor = mapTeamToBorderColor;
-exports.clamp = clamp;
-exports.getRandomInt = getRandomInt;
-exports.getRandomVelocity = getRandomVelocity;
-exports.otherTeam = otherTeam;
-// Generate a random GUID.
-// @see https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-//
-// @return String
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
-
-function mapTeamToFillColor(team) {
-  return parseInt(team) === 1 ? '#0074D9' : '#111111';
-}
-
-function mapTeamToBorderColor(team) {
-  return parseInt(team) === 1 ? '#001f3f' : '#01FF70';
-}
-
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getRandomVelocity() {
-  return { x: getRandomInt(-1, 1), y: getRandomInt(-1, 1) };
-}
-
-function otherTeam(team) {
-  return parseInt(team) === 1 ? 2 : 1;
-}
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -527,340 +539,6 @@ function draw(ctx) {
   ctx.fillStyle = '#111';
   ctx.fillRect(this.x, this.y, 10, 10);
 }
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Entity2 = __webpack_require__(4);
-
-var _Entity3 = _interopRequireDefault(_Entity2);
-
-var _Shield = __webpack_require__(8);
-
-var _Shield2 = _interopRequireDefault(_Shield);
-
-var _helpers = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var BASE_ENERGY = 30;
-var CIRCUMEFRENCE_POINTS = 32;
-var OFFSET_TURNS = 50;
-
-var Cell = function (_Entity) {
-  _inherits(Cell, _Entity);
-
-  function Cell(x, y, team) {
-    _classCallCheck(this, Cell);
-
-    var _this = _possibleConstructorReturn(this, (Cell.__proto__ || Object.getPrototypeOf(Cell)).call(this, x, y));
-
-    _this.energy = BASE_ENERGY;
-    _this.setTeam(team);
-
-    _this.targets = [];
-    _this.hasShield = false;
-    _this.upgrades = [];
-
-    _this.drawPoints = [];
-    for (var pointIndex = 0; pointIndex < CIRCUMEFRENCE_POINTS; pointIndex++) {
-      _this.drawPoints.push({
-        velocity: (0, _helpers.getRandomVelocity)(),
-        offset: { x: 0, y: 0 },
-        turns: { x: 0, y: 0 }
-      });
-    }
-    return _this;
-  }
-
-  _createClass(Cell, [{
-    key: 'setTeam',
-    value: function setTeam(team) {
-      this.team = team;
-      this.fillColor = (0, _helpers.mapTeamToFillColor)(team);
-      this.borderColor = (0, _helpers.mapTeamToBorderColor)(team);
-    }
-  }, {
-    key: 'addTarget',
-    value: function addTarget(target) {
-      this.targets.push(target);
-    }
-  }, {
-    key: 'applyUpgrade',
-    value: function applyUpgrade(upgrade) {
-      this.upgrades.push(upgrade);
-    }
-  }, {
-    key: 'addEnergy',
-    value: function addEnergy(amount) {
-      this.energy += amount;
-    }
-  }, {
-    key: 'subtractEnergy',
-    value: function subtractEnergy(amount) {
-      this.energy -= amount;
-    }
-  }, {
-    key: 'mapEnergyToRadius',
-    value: function mapEnergyToRadius() {
-      return this.energy;
-    }
-  }, {
-    key: 'getPointOffsetRange',
-    value: function getPointOffsetRange() {
-      return this.mapEnergyToRadius() * .05;
-    }
-  }, {
-    key: 'updateDrawPoints',
-    value: function updateDrawPoints() {
-      var dimensions = ['x', 'y'];
-
-      for (var index = 0; index < this.drawPoints.length; index++) {
-        var point = this.drawPoints[index];
-
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = dimensions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var d = _step.value;
-
-            var velocity = point.velocity[d] * (point.turns[d] / (OFFSET_TURNS * 10));
-            var range = this.getPointOffsetRange();
-            this.drawPoints[index].offset[d] = (0, _helpers.clamp)(point.offset[d] + velocity, -range, range);
-            this.drawPoints[index].turns[d]++;
-
-            if (point.turns[d] >= OFFSET_TURNS) {
-              this.drawPoints[index].velocity[d] = (0, _helpers.getRandomInt)(-1, 1);
-              this.drawPoints[index].turns[d] = 0;
-            }
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
-      }
-    }
-  }, {
-    key: 'update',
-    value: function update(game) {
-      if (!this.hasShield) {
-        game.addEntity(new _Shield2.default(this.x, this.y, this));
-        this.hasShield = true;
-      }
-
-      // check energy level
-      //  if energy level <= "20" or something
-      //    break the cell into particles, target closest friendly cells
-      //    if none, game over
-
-      // check if mouse click occured
-      //  either check if this cell was clicked
-      //  or if its highlighted already, apply the target
-
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = this.targets[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          // check if target exists in game world
-          //  fire proton
-          //  deduct energy
-
-          var target = _step2.value;
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-    }
-  }, {
-    key: 'draw',
-    value: function draw(ctx) {
-      var _this2 = this;
-
-      ctx.fillStyle = this.fillColor;
-      ctx.strokeStyle = this.borderColor;
-      ctx.lineWidth = this.mapEnergyToRadius() / 6;
-
-      this.updateDrawPoints();
-
-      ctx.beginPath();
-
-      var getPointPosition = function getPointPosition(index) {
-        var offset = _this2.drawPoints[index].offset;
-
-
-        var radius = _this2.mapEnergyToRadius();
-        var radian = 2 * Math.PI * index / CIRCUMEFRENCE_POINTS;
-
-        var px = _this2.x + radius * Math.cos(radian) + offset.x;
-        var py = _this2.y + radius * Math.sin(radian) + offset.y;
-
-        return { px: px, py: py };
-      };
-
-      for (var index = 0; index < CIRCUMEFRENCE_POINTS; index++) {
-        var _getPointPosition = getPointPosition(index),
-            px = _getPointPosition.px,
-            py = _getPointPosition.py;
-
-        index === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-
-        // Close the circle
-        if (index === CIRCUMEFRENCE_POINTS - 1) {
-          var start = getPointPosition(0);
-          ctx.lineTo(start.px, start.py);
-        }
-      }
-
-      ctx.stroke();
-      ctx.fill();
-    }
-  }]);
-
-  return Cell;
-}(_Entity3.default);
-
-exports.default = Cell;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Entity2 = __webpack_require__(4);
-
-var _Entity3 = _interopRequireDefault(_Entity2);
-
-var _helpers = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var SHIELD_WIDTH = 10;
-var SHIELD_BUFFER = 20;
-
-var Shield = function (_Entity) {
-  _inherits(Shield, _Entity);
-
-  function Shield(x, y, cell) {
-    var _this$control;
-
-    _classCallCheck(this, Shield);
-
-    var _this = _possibleConstructorReturn(this, (Shield.__proto__ || Object.getPrototypeOf(Shield)).call(this, x, y));
-
-    _this.cell = cell;
-
-    _this.control = (_this$control = {}, _defineProperty(_this$control, cell.team, 100), _defineProperty(_this$control, (0, _helpers.otherTeam)(cell.team), 0), _this$control);
-    return _this;
-  }
-
-  _createClass(Shield, [{
-    key: 'update',
-    value: function update(game) {}
-  }, {
-    key: 'draw',
-    value: function draw(ctx) {
-      ctx.lineWidth = SHIELD_WIDTH;
-      var radius = this.cell.mapEnergyToRadius() + SHIELD_BUFFER + this.cell.getPointOffsetRange() * 2;
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = Object.keys(this.control)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var team = _step.value;
-
-          var val = this.control[team];
-          if (val === 0) continue;
-
-          ctx.strokeStyle = (0, _helpers.mapTeamToFillColor)(team);
-          ctx.beginPath();
-          ctx.arc(this.cell.x, this.cell.y, radius, 0, 2 * Math.PI);
-          ctx.stroke();
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-    }
-  }]);
-
-  return Shield;
-}(_Entity3.default);
-
-exports.default = Shield;
-
-//  if shield control === 0
-//    flip team
-//    rebuild shield
-//    check if other friendly game cells exist, if not, end game
 
 /***/ })
 /******/ ]);

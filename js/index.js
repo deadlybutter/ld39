@@ -3,13 +3,17 @@ import Game from './core/Game';
 const game = new Game();
 window.startGame = game.start;
 
-import Cell from './entities/Cell';
-const test = new Cell(200, 200, 1);
-game.addEntity(test);
+// import Cell from './entities/Cell';
+// import Proton from './entities/Proton';
+// const test = new Cell(10, 10, 1);
+// game.addEntity(test);
+//
+// const testProton = new Proton(500, 440, 1, test);
+// game.addEntity(testProton);
 
-setInterval(() => {
-  test.addEnergy(.2);
-}, 500);
+// setInterval(() => {
+//   test.addEnergy(.2);
+// }, 500);
 
 // setInterval(() => {
 //   for (var i = 0; i < 20; i++) {

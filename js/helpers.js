@@ -13,11 +13,11 @@ export function guid() {
 }
 
 export function mapTeamToFillColor(team) {
-  return parseInt(team) === 1 ? '#0074D9' : '#111111';
+  return parseInt(team) === 1 ? '#0074D9' : '#111';
 }
 
 export function mapTeamToBorderColor(team) {
-  return parseInt(team) === 1 ? '#001f3f' : '#01FF70';
+  return parseInt(team) === 1 ? '#7FDBFF' : '#01FF70';
 }
 
 export function clamp(value, min, max) {
@@ -34,4 +34,13 @@ export function getRandomVelocity() {
 
 export function otherTeam(team) {
   return parseInt(team) === 1 ? 2 : 1;
+}
+
+export function mag(vec) {
+  return Math.sqrt((vec.x * vec.x) + (vec.y * vec.y));
+}
+
+export function normalize(vec) {
+  const m = mag(vec);
+  return { x: vec.x / m, y: vec.y / m }; 
 }
