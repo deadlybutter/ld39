@@ -1,0 +1,39 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <title>#LD39</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="wrapper -gradient">
+      <div class="container -vertical-center">
+        <canvas width="960" height="540">Yikes, your browser is really old! Upgrade it to play this game.</canvas>
+      </div>
+    </div>
+
+    <div class="wrapper">
+      <div class="container">
+        <h1>#ld39</h1>
+        <p>This is a work in progress</p>
+      </div>
+    </div>
+
+    <script src="./dist/game.js"></script>
+    <script>
+      function checkSize() {
+        if (window.innerWidth < 960) {
+          console.log("This game is designed for desktop only!");
+          return;
+        }
+
+        window.removeEventListener('resize', checkSize);
+        // Game.start();
+      }
+
+      (function() {
+        window.addEventListener('resize', checkSize);
+        checkSize();
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+html, body {
+  margin: 0;
+  width: 100%;
+}
+
+.wrapper {
+  background-color: #FFF;
+  height: 98vh;
+}
+
+.wrapper.-gradient {
+  background: -webkit-linear-gradient(to bottom, #eef2f3, #e8ebeb);
+  background: linear-gradient(to bottom, #eef2f3, #e8ebeb);
+}
+
+.container {
+  max-width: 960px;
+  padding: 24px;
+  margin: auto;
+  height: 100%;
+}
+
+.container.-vertical-center * {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+canvas {
+  box-shadow: 0px 0px 22px 1px #111;
+  background: #FFF;
+}
