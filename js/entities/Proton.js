@@ -6,7 +6,7 @@ import { normalize, mapTeamToFillColor } from '../helpers';
 
 class Proton extends Entity {
   constructor(x, y, team, target) {
-    super(x, y);
+    super(x, y, 'proton');
 
     this.team = team;
     this.target = target;

@@ -1,5 +1,5 @@
-const SHIELD_WIDTH = 10;
-const SHIELD_BUFFER = 20;
+export const SHIELD_WIDTH = 10;
+export const SHIELD_BUFFER = 20;
 
 import Entity from '../core/Entity';
 import {
@@ -10,7 +10,7 @@ import {
 
 class Shield extends Entity {
   constructor(x, y, cell) {
-    super(x, y);
+    super(x, y, 'shield');
     this.cell = cell;
     this.resetControl();
 

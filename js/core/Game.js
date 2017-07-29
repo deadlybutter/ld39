@@ -1,4 +1,7 @@
 import ParticleManager from './ParticleManager';
+import MouseManager from './MouseManager';
+import UpdateManager from './UpdateManager';
+import RulesManager from './RulesManager';
 
 class Game {
   constructor() {
@@ -8,7 +11,10 @@ class Game {
     this.lastFrame = Date.now();
     this.entities = {};
 
+    this.updateManager = new UpdateManager();
+    this.rulesManager = new RulesManager();
     this.particleManager = new ParticleManager();
+    this.mouseManager = new MouseManager(this.canvas);
 
     this.start = this.start.bind(this);
     this.draw = this.draw.bind(this);
@@ -25,8 +31,8 @@ class Game {
   }
 
   update(delta) {
-    this.entityIterator(entity => entity.update(this));
-    this.particleManager.update(this);
+    this.rulesManager.update(this);
+    this.updateManager.update(this);
   }
 
   addEntity(entity) {

@@ -42,5 +42,12 @@ export function mag(vec) {
 
 export function normalize(vec) {
   const m = mag(vec);
-  return { x: vec.x / m, y: vec.y / m }; 
+  return { x: vec.x / m, y: vec.y / m };
+}
+
+export function circleCollide(x1, y1, r1, x2, y2, r2) {
+  const dx = x1 - x2;
+  const dy = y1 - y2;
+  const distance = Math.sqrt((dx * dx) + (dy * dy));
+  return distance < (r1 + r2);
 }

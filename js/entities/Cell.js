@@ -14,7 +14,7 @@ import {
 
 class Cell extends Entity {
   constructor(x, y, team) {
-    super(x, y);
+    super(x, y, 'cell');
 
     this.energy = BASE_ENERGY;
     this.setTeam(team);

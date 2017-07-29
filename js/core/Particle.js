@@ -14,7 +14,7 @@ const PARTICLE_MAP = {
 
 class Particle extends Entity {
   constructor(x, y, lifespan, type) {
-    super(x, y);
+    super(x, y, 'particle');
     this.lifespan = lifespan;
     this.type = type;
 
