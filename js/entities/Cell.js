@@ -3,6 +3,7 @@ const CIRCUMEFRENCE_POINTS = 32;
 const OFFSET_TURNS = 50;
 
 import Entity from '../core/Entity';
+import Shield from './Shield';
 import {
   mapTeamToFillColor,
   mapTeamToBorderColor,
@@ -19,7 +20,7 @@ class Cell extends Entity {
     this.setTeam(team);
 
     this.targets = [];
-    this.shield = null;
+    this.hasShield = false;
     this.upgrades = [];
 
     this.drawPoints = [];
@@ -58,6 +59,10 @@ class Cell extends Entity {
     return this.energy;
   }
 
+  getPointOffsetRange() {
+    return this.mapEnergyToRadius() * .05;
+  }
+
   updateDrawPoints() {
     const dimensions = ['x', 'y'];
 
@@ -66,7 +71,7 @@ class Cell extends Entity {
 
       for (const d of dimensions) {
         const velocity = point.velocity[d] * (point.turns[d] / (OFFSET_TURNS * 10));
-        const range = this.mapEnergyToRadius() * .05;
+        const range = this.getPointOffsetRange();
         this.drawPoints[index].offset[d] = clamp(point.offset[d] + velocity, -range, range);
         this.drawPoints[index].turns[d]++;
 
@@ -79,12 +84,10 @@ class Cell extends Entity {
   }
 
   update(game) {
-    // check shield
-    //  if shield === null, make one
-    //  if shield control === 0
-    //    flip team
-    //    rebuild shield
-    //    check if other friendly game cells exist, if not, end game
+    if (! this.hasShield ) {
+      game.addEntity(new Shield(this.x, this.y, this));
+      this.hasShield = true;
+    }
 
     // check energy level
     //  if energy level <= "20" or something

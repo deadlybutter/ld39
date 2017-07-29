@@ -470,6 +470,7 @@ exports.mapTeamToBorderColor = mapTeamToBorderColor;
 exports.clamp = clamp;
 exports.getRandomInt = getRandomInt;
 exports.getRandomVelocity = getRandomVelocity;
+exports.otherTeam = otherTeam;
 // Generate a random GUID.
 // @see https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 //
@@ -482,11 +483,11 @@ function guid() {
 }
 
 function mapTeamToFillColor(team) {
-  return team === 1 ? '#0074D9' : '#111111';
+  return parseInt(team) === 1 ? '#0074D9' : '#111111';
 }
 
 function mapTeamToBorderColor(team) {
-  return team === 1 ? '#001f3f' : '#01FF70';
+  return parseInt(team) === 1 ? '#001f3f' : '#01FF70';
 }
 
 function clamp(value, min, max) {
@@ -499,6 +500,10 @@ function getRandomInt(min, max) {
 
 function getRandomVelocity() {
   return { x: getRandomInt(-1, 1), y: getRandomInt(-1, 1) };
+}
+
+function otherTeam(team) {
+  return parseInt(team) === 1 ? 2 : 1;
 }
 
 /***/ }),
@@ -540,6 +545,10 @@ var _Entity2 = __webpack_require__(4);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
+var _Shield = __webpack_require__(8);
+
+var _Shield2 = _interopRequireDefault(_Shield);
+
 var _helpers = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -566,7 +575,7 @@ var Cell = function (_Entity) {
     _this.setTeam(team);
 
     _this.targets = [];
-    _this.shield = null;
+    _this.hasShield = false;
     _this.upgrades = [];
 
     _this.drawPoints = [];
@@ -613,6 +622,11 @@ var Cell = function (_Entity) {
       return this.energy;
     }
   }, {
+    key: 'getPointOffsetRange',
+    value: function getPointOffsetRange() {
+      return this.mapEnergyToRadius() * .05;
+    }
+  }, {
     key: 'updateDrawPoints',
     value: function updateDrawPoints() {
       var dimensions = ['x', 'y'];
@@ -629,7 +643,7 @@ var Cell = function (_Entity) {
             var d = _step.value;
 
             var velocity = point.velocity[d] * (point.turns[d] / (OFFSET_TURNS * 10));
-            var range = this.mapEnergyToRadius() * .05;
+            var range = this.getPointOffsetRange();
             this.drawPoints[index].offset[d] = (0, _helpers.clamp)(point.offset[d] + velocity, -range, range);
             this.drawPoints[index].turns[d]++;
 
@@ -657,12 +671,10 @@ var Cell = function (_Entity) {
   }, {
     key: 'update',
     value: function update(game) {
-      // check shield
-      //  if shield === null, make one
-      //  if shield control === 0
-      //    flip team
-      //    rebuild shield
-      //    check if other friendly game cells exist, if not, end game
+      if (!this.hasShield) {
+        game.addEntity(new _Shield2.default(this.x, this.y, this));
+        this.hasShield = true;
+      }
 
       // check energy level
       //  if energy level <= "20" or something
@@ -749,6 +761,106 @@ var Cell = function (_Entity) {
 }(_Entity3.default);
 
 exports.default = Cell;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Entity2 = __webpack_require__(4);
+
+var _Entity3 = _interopRequireDefault(_Entity2);
+
+var _helpers = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SHIELD_WIDTH = 10;
+var SHIELD_BUFFER = 20;
+
+var Shield = function (_Entity) {
+  _inherits(Shield, _Entity);
+
+  function Shield(x, y, cell) {
+    var _this$control;
+
+    _classCallCheck(this, Shield);
+
+    var _this = _possibleConstructorReturn(this, (Shield.__proto__ || Object.getPrototypeOf(Shield)).call(this, x, y));
+
+    _this.cell = cell;
+
+    _this.control = (_this$control = {}, _defineProperty(_this$control, cell.team, 100), _defineProperty(_this$control, (0, _helpers.otherTeam)(cell.team), 0), _this$control);
+    return _this;
+  }
+
+  _createClass(Shield, [{
+    key: 'update',
+    value: function update(game) {}
+  }, {
+    key: 'draw',
+    value: function draw(ctx) {
+      ctx.lineWidth = SHIELD_WIDTH;
+      var radius = this.cell.mapEnergyToRadius() + SHIELD_BUFFER + this.cell.getPointOffsetRange() * 2;
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = Object.keys(this.control)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var team = _step.value;
+
+          var val = this.control[team];
+          if (val === 0) continue;
+
+          ctx.strokeStyle = (0, _helpers.mapTeamToFillColor)(team);
+          ctx.beginPath();
+          ctx.arc(this.cell.x, this.cell.y, radius, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }]);
+
+  return Shield;
+}(_Entity3.default);
+
+exports.default = Shield;
+
+//  if shield control === 0
+//    flip team
+//    rebuild shield
+//    check if other friendly game cells exist, if not, end game
 
 /***/ })
 /******/ ]);
