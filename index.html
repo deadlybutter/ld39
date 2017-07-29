@@ -7,7 +7,7 @@
   <body>
     <div class="wrapper -gradient">
       <div class="container -vertical-center">
-        <canvas width="960" height="540">Yikes, your browser is really old! Upgrade it to play this game.</canvas>
+        <canvas id="canvas" width="960" height="540">Yikes, your browser is really old! Upgrade it to play this game.</canvas>
       </div>
     </div>
 
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <script src="./dist/game.js"></script>
+    <script src="./dist/index.js"></script>
     <script>
       function checkSize() {
         if (window.innerWidth < 960) {
@@ -27,7 +27,7 @@
         }
 
         window.removeEventListener('resize', checkSize);
-        // Game.start();
+        startGame();
       }
 
       (function() {

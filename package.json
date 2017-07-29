@@ -4,13 +4,14 @@
   "description": "LD39 entry",
   "main": "index.js",
   "scripts": {
-    "start": "babel js/index.js -o dist/game.js --watch",
-    "build": "babel js/index.js -o dist/game.js"
+    "start": "webpack --watch --colors",
+    "build": "webpack --colors"
   },
   "author": "Joe Kent",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-loader": "^7.1.1",
     "babel-preset-env": "^1.6.0"
   }
 }
