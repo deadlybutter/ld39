@@ -8,11 +8,11 @@ class Entity {
     this.id = guid();
   }
 
-  update({ delta, game }) {
+  update(game) {
     return;
   }
 
-  draw({ ctx }) {
+  draw(ctx) {
     return;
   }
 }

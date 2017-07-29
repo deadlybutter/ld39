@@ -28,19 +28,17 @@ class Particle extends Entity {
     this.isAlive = this.born < this.death;
   }
 
-  update(props) {
-    const { game } = props;
-
+  update(game) {
     if (this.isAlive && this.death < Date.now()) {
       game.particleManager.setFree(this.id);
       return;
     }
 
-    PARTICLE_MAP[this.type].update.apply(this, [props]);
+    PARTICLE_MAP[this.type].update.apply(this, [game]);
   }
 
-  draw(props) {
-    PARTICLE_MAP[this.type].draw.apply(this, [props]);
+  draw(ctx) {
+    PARTICLE_MAP[this.type].draw.apply(this, [ctx]);
   }
 }
 

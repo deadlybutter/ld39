@@ -25,10 +25,8 @@ class Game {
   }
 
   update(delta) {
-    const props = { delta, game: this };
-
-    this.entityIterator(entity => entity.update(props));
-    this.particleManager.update(props);
+    this.entityIterator(entity => entity.update(this));
+    this.particleManager.update(this);
   }
 
   addEntity(entity) {
@@ -43,9 +41,9 @@ class Game {
     const { ctx } = this;
 
     // Collect frame data to calculate delta
-    const now = Date.now();
-    const delta = now - this.lastFrame;
-    this.update(delta);
+    // const now = Date.now();
+    // const delta = now - this.lastFrame;
+    this.update(this);
 
     // Save blank context
     ctx.save();
@@ -55,9 +53,8 @@ class Game {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Render
-    const props = { ctx };
-    this.entityIterator(entity => entity.draw(props));
-    this.particleManager.draw(props);
+    this.entityIterator(entity => entity.draw(ctx));
+    this.particleManager.draw(ctx);
 
     // Restore context to blank state
     ctx.restore();

@@ -3,8 +3,16 @@ html, body {
   width: 100%;
 }
 
+h1 {
+  color: #0074D9;
+}
+
+p {
+  color: #111;
+}
+
 .wrapper {
-  background-color: #FFF;
+  background-color: #fafdff;
   height: 98vh;
 }
 

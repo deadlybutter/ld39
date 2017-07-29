@@ -70,26 +70,36 @@
 "use strict";
 
 
-var _Game = __webpack_require__(2);
+var _Game = __webpack_require__(1);
 
 var _Game2 = _interopRequireDefault(_Game);
+
+var _Cell = __webpack_require__(7);
+
+var _Cell2 = _interopRequireDefault(_Cell);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var game = new _Game2.default();
 window.startGame = game.start;
 
+var test = new _Cell2.default(200, 200, 1);
+game.addEntity(test);
+
+setInterval(function () {
+  test.addEnergy(.2);
+}, 500);
+
 // setInterval(() => {
-//   for (var i = 0; i < 200; i++) {
-//     game.particleManager.makeParticle(Math.random() * 100, Math.random() * 100, Math.random() * 1000, 'test');
+//   for (var i = 0; i < 20; i++) {
+//     game.particleManager.makeParticle(Math.random() * 100, Math.random() * 100, 1000 + (Math.random() * 2000), 'test');
 //   }
 //
-//   console.log(game.particleManager.particles.length);
-// }, 100);
+//   // console.log(game.particleManager.particles.length);
+// }, 500);
 
 /***/ }),
-/* 1 */,
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -101,7 +111,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _ParticleManager = __webpack_require__(3);
+var _ParticleManager = __webpack_require__(2);
 
 var _ParticleManager2 = _interopRequireDefault(_ParticleManager);
 
@@ -161,12 +171,12 @@ var Game = function () {
   }, {
     key: 'update',
     value: function update(delta) {
-      var props = { delta: delta, game: this };
+      var _this = this;
 
       this.entityIterator(function (entity) {
-        return entity.update(props);
+        return entity.update(_this);
       });
-      this.particleManager.update(props);
+      this.particleManager.update(this);
     }
   }, {
     key: 'addEntity',
@@ -184,10 +194,10 @@ var Game = function () {
       var ctx = this.ctx;
 
       // Collect frame data to calculate delta
+      // const now = Date.now();
+      // const delta = now - this.lastFrame;
 
-      var now = Date.now();
-      var delta = now - this.lastFrame;
-      this.update(delta);
+      this.update(this);
 
       // Save blank context
       ctx.save();
@@ -197,11 +207,10 @@ var Game = function () {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Render
-      var props = { ctx: ctx };
       this.entityIterator(function (entity) {
-        return entity.draw(props);
+        return entity.draw(ctx);
       });
-      this.particleManager.draw(props);
+      this.particleManager.draw(ctx);
 
       // Restore context to blank state
       ctx.restore();
@@ -218,7 +227,7 @@ var Game = function () {
 exports.default = Game;
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -230,7 +239,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Particle = __webpack_require__(4);
+var _Particle = __webpack_require__(3);
 
 var _Particle2 = _interopRequireDefault(_Particle);
 
@@ -303,16 +312,16 @@ var ParticleManager = function () {
     }
   }, {
     key: 'update',
-    value: function update(props) {
+    value: function update(game) {
       this.particleIterator(function (particle) {
-        return particle.update(props);
+        return particle.update(game);
       });
     }
   }, {
     key: 'draw',
-    value: function draw(props) {
+    value: function draw(ctx) {
       this.particleIterator(function (particle) {
-        return particle.draw(props);
+        return particle.draw(ctx);
       });
     }
   }]);
@@ -323,7 +332,7 @@ var ParticleManager = function () {
 exports.default = ParticleManager;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -335,11 +344,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Entity2 = __webpack_require__(5);
+var _Entity2 = __webpack_require__(4);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _Test = __webpack_require__(7);
+var _Test = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -381,21 +390,18 @@ var Particle = function (_Entity) {
     }
   }, {
     key: 'update',
-    value: function update(props) {
-      var game = props.game;
-
-
+    value: function update(game) {
       if (this.isAlive && this.death < Date.now()) {
         game.particleManager.setFree(this.id);
         return;
       }
 
-      PARTICLE_MAP[this.type].update.apply(this, [props]);
+      PARTICLE_MAP[this.type].update.apply(this, [game]);
     }
   }, {
     key: 'draw',
-    value: function draw(props) {
-      PARTICLE_MAP[this.type].draw.apply(this, [props]);
+    value: function draw(ctx) {
+      PARTICLE_MAP[this.type].draw.apply(this, [ctx]);
     }
   }]);
 
@@ -405,7 +411,7 @@ var Particle = function (_Entity) {
 exports.default = Particle;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -417,7 +423,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(5);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -433,17 +439,12 @@ var Entity = function () {
 
   _createClass(Entity, [{
     key: 'update',
-    value: function update(_ref) {
-      var delta = _ref.delta,
-          game = _ref.game;
-
+    value: function update(game) {
       return;
     }
   }, {
     key: 'draw',
-    value: function draw(_ref2) {
-      var ctx = _ref2.ctx;
-
+    value: function draw(ctx) {
       return;
     }
   }]);
@@ -452,6 +453,53 @@ var Entity = function () {
 }();
 
 exports.default = Entity;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.guid = guid;
+exports.mapTeamToFillColor = mapTeamToFillColor;
+exports.mapTeamToBorderColor = mapTeamToBorderColor;
+exports.clamp = clamp;
+exports.getRandomInt = getRandomInt;
+exports.getRandomVelocity = getRandomVelocity;
+// Generate a random GUID.
+// @see https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+//
+// @return String
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+function mapTeamToFillColor(team) {
+  return team === 1 ? '#0074D9' : '#111111';
+}
+
+function mapTeamToBorderColor(team) {
+  return team === 1 ? '#001f3f' : '#01FF70';
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomVelocity() {
+  return { x: getRandomInt(-1, 1), y: getRandomInt(-1, 1) };
+}
 
 /***/ }),
 /* 6 */
@@ -463,16 +511,16 @@ exports.default = Entity;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.guid = guid;
-// Generate a random GUID.
-// @see https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-//
-// @return String
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+exports.update = update;
+exports.draw = draw;
+function update(game) {
+  this.x += 0.1;
+  this.y += 0.1;
+}
+
+function draw(ctx) {
+  ctx.fillStyle = '#111';
+  ctx.fillRect(this.x, this.y, 10, 10);
 }
 
 /***/ }),
@@ -485,22 +533,222 @@ function guid() {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.update = update;
-exports.draw = draw;
-function update(_ref) {
-  var delta = _ref.delta,
-      game = _ref.game;
 
-  this.x += 0.1 * delta;
-  this.y += 0.1 * delta;
-}
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function draw(_ref2) {
-  var ctx = _ref2.ctx;
+var _Entity2 = __webpack_require__(4);
 
-  ctx.fillStyle = '#111';
-  ctx.fillRect(this.x, this.y, 10, 10);
-}
+var _Entity3 = _interopRequireDefault(_Entity2);
+
+var _helpers = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BASE_ENERGY = 30;
+var CIRCUMEFRENCE_POINTS = 32;
+var OFFSET_TURNS = 50;
+
+var Cell = function (_Entity) {
+  _inherits(Cell, _Entity);
+
+  function Cell(x, y, team) {
+    _classCallCheck(this, Cell);
+
+    var _this = _possibleConstructorReturn(this, (Cell.__proto__ || Object.getPrototypeOf(Cell)).call(this, x, y));
+
+    _this.energy = BASE_ENERGY;
+    _this.setTeam(team);
+
+    _this.targets = [];
+    _this.shield = null;
+    _this.upgrades = [];
+
+    _this.drawPoints = [];
+    for (var pointIndex = 0; pointIndex < CIRCUMEFRENCE_POINTS; pointIndex++) {
+      _this.drawPoints.push({
+        velocity: (0, _helpers.getRandomVelocity)(),
+        offset: { x: 0, y: 0 },
+        turns: { x: 0, y: 0 }
+      });
+    }
+    return _this;
+  }
+
+  _createClass(Cell, [{
+    key: 'setTeam',
+    value: function setTeam(team) {
+      this.team = team;
+      this.fillColor = (0, _helpers.mapTeamToFillColor)(team);
+      this.borderColor = (0, _helpers.mapTeamToBorderColor)(team);
+    }
+  }, {
+    key: 'addTarget',
+    value: function addTarget(target) {
+      this.targets.push(target);
+    }
+  }, {
+    key: 'applyUpgrade',
+    value: function applyUpgrade(upgrade) {
+      this.upgrades.push(upgrade);
+    }
+  }, {
+    key: 'addEnergy',
+    value: function addEnergy(amount) {
+      this.energy += amount;
+    }
+  }, {
+    key: 'subtractEnergy',
+    value: function subtractEnergy(amount) {
+      this.energy -= amount;
+    }
+  }, {
+    key: 'mapEnergyToRadius',
+    value: function mapEnergyToRadius() {
+      return this.energy;
+    }
+  }, {
+    key: 'updateDrawPoints',
+    value: function updateDrawPoints() {
+      var dimensions = ['x', 'y'];
+
+      for (var index = 0; index < this.drawPoints.length; index++) {
+        var point = this.drawPoints[index];
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = dimensions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var d = _step.value;
+
+            var velocity = point.velocity[d] * (point.turns[d] / (OFFSET_TURNS * 10));
+            var range = this.mapEnergyToRadius() * .05;
+            this.drawPoints[index].offset[d] = (0, _helpers.clamp)(point.offset[d] + velocity, -range, range);
+            this.drawPoints[index].turns[d]++;
+
+            if (point.turns[d] >= OFFSET_TURNS) {
+              this.drawPoints[index].velocity[d] = (0, _helpers.getRandomInt)(-1, 1);
+              this.drawPoints[index].turns[d] = 0;
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+    }
+  }, {
+    key: 'update',
+    value: function update(game) {
+      // check shield
+      //  if shield === null, make one
+      //  if shield control === 0
+      //    flip team
+      //    rebuild shield
+      //    check if other friendly game cells exist, if not, end game
+
+      // check energy level
+      //  if energy level <= "20" or something
+      //    break the cell into particles, target closest friendly cells
+      //    if none, game over
+
+      // check if mouse click occured
+      //  either check if this cell was clicked
+      //  or if its highlighted already, apply the target
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.targets[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          // check if target exists in game world
+          //  fire proton
+          //  deduct energy
+
+          var target = _step2.value;
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'draw',
+    value: function draw(ctx) {
+      var _this2 = this;
+
+      ctx.fillStyle = this.fillColor;
+      ctx.strokeStyle = this.borderColor;
+      ctx.lineWidth = this.mapEnergyToRadius() / 6;
+
+      this.updateDrawPoints();
+
+      ctx.beginPath();
+
+      var getPointPosition = function getPointPosition(index) {
+        var offset = _this2.drawPoints[index].offset;
+
+
+        var radius = _this2.mapEnergyToRadius();
+        var radian = 2 * Math.PI * index / CIRCUMEFRENCE_POINTS;
+
+        var px = _this2.x + radius * Math.cos(radian) + offset.x;
+        var py = _this2.y + radius * Math.sin(radian) + offset.y;
+
+        return { px: px, py: py };
+      };
+
+      for (var index = 0; index < CIRCUMEFRENCE_POINTS; index++) {
+        var _getPointPosition = getPointPosition(index),
+            px = _getPointPosition.px,
+            py = _getPointPosition.py;
+
+        index === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+
+        // Close the circle
+        if (index === CIRCUMEFRENCE_POINTS - 1) {
+          var start = getPointPosition(0);
+          ctx.lineTo(start.px, start.py);
+        }
+      }
+
+      ctx.stroke();
+      ctx.fill();
+    }
+  }]);
+
+  return Cell;
+}(_Entity3.default);
+
+exports.default = Cell;
 
 /***/ })
 /******/ ]);

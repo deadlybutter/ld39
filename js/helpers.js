@@ -11,3 +11,23 @@ export function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
+
+export function mapTeamToFillColor(team) {
+  return team === 1 ? '#0074D9' : '#111111';
+}
+
+export function mapTeamToBorderColor(team) {
+  return team === 1 ? '#001f3f' : '#01FF70';
+}
+
+export function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+export function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function getRandomVelocity() {
+  return { x: getRandomInt(-1, 1), y: getRandomInt(-1, 1) };
+}

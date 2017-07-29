@@ -57,12 +57,12 @@ class ParticleManager {
     this.freeStack.push(index);
   }
 
-  update(props) {
-    this.particleIterator(particle => particle.update(props));
+  update(game) {
+    this.particleIterator(particle => particle.update(game));
   }
 
-  draw(props) {
-    this.particleIterator(particle => particle.draw(props));
+  draw(ctx) {
+    this.particleIterator(particle => particle.draw(ctx));
   }
 }
 
