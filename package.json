@@ -4,7 +4,7 @@
   "description": "LD39 entry",
   "main": "index.js",
   "scripts": {
-    "start": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel js/index.js -o dist/game.js --watch",
     "build": "babel js/index.js -o dist/game.js"
   },
   "author": "Joe Kent",
