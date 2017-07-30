@@ -40,8 +40,6 @@ class Cell extends Entity {
         turns: { x: 0, y: 0 },
       });
     }
-
-    this.isHighlighted = false;
   }
 
   setTeam(team) {
@@ -115,17 +113,20 @@ class Cell extends Entity {
     //    nuke it
 
     const hits = game.mouseManager.hits;
+    const isHighlighted = game.highlightedCell === this.id;
+
     if (hits.length) {
       if (hits.includes(this.id)) {
-        this.isHighlighted = !this.isHighlighted;
+        if (game.highlightedCell === null) game.setHighlightedCell(this.id);
+        else if (isHighlighted) game.setHighlightedCell(null);
       }
-      else if (this.isHighlighted) {
+      else if (isHighlighted) {
         for (const hitId of hits) {
 
           const entity = game.entities[hitId];
           if (entity.type === 'cell') {
             this.toggleTarget(entity.id);
-            this.isHighlighted = false;
+            game.setHighlightedCell(null);
           }
         }
       }
@@ -148,9 +149,9 @@ class Cell extends Entity {
     }
   }
 
-  draw(ctx) {
+  draw(ctx, game) {
     ctx.fillStyle = this.fillColor;
-    ctx.strokeStyle = this.isHighlighted ? HIGHLIGHT_COLOR : this.borderColor;
+    ctx.strokeStyle = game.highlightedCell === this.id ? HIGHLIGHT_COLOR : this.borderColor;
     ctx.lineWidth = this.mapEnergyToRadius() / 6;
 
     this.updateDrawPoints();

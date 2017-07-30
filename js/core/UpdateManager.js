@@ -22,6 +22,7 @@ class UpdateManager {
   }
 
   playUpdate(game) {
+    game.updateHighlight();
     game.mouseManager.update(game);
     game.entityIterator(entity => entity.update(game));
     game.particleManager.update(game);

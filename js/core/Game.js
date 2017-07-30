@@ -20,6 +20,12 @@ class Game {
 
     this.start = this.start.bind(this);
     this.draw = this.draw.bind(this);
+
+    this.highlightedCell = null;
+    this.nextHighlight = {
+      shouldUpdate: false,
+      value: null,
+    };
   }
 
   start() {
@@ -45,6 +51,20 @@ class Game {
     delete this.entities[id];
   }
 
+  setHighlightedCell(id) {
+    this.nextHighlight = {
+      shouldUpdate: true,
+      value: id,
+    };
+  }
+
+  updateHighlight() {
+    if (! this.nextHighlight.shouldUpdate) return;
+
+    this.highlightedCell = this.nextHighlight.value;
+    this.nextHighlight.shouldUpdate = false;
+  }
+
   draw() {
     const { ctx } = this;
 
@@ -61,8 +81,8 @@ class Game {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Render
-    this.entityIterator(entity => entity.draw(ctx));
-    this.particleManager.draw(ctx);
+    this.entityIterator(entity => entity.draw(ctx, this));
+    this.particleManager.draw(ctx, this);
 
     // Restore context to blank state
     ctx.restore();

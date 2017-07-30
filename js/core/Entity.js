@@ -13,7 +13,7 @@ class Entity {
     return;
   }
 
-  draw(ctx) {
+  draw(ctx, game) {
     return;
   }
 }
