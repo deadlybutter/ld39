@@ -2,6 +2,7 @@ import ParticleManager from './ParticleManager';
 import MouseManager from './MouseManager';
 import UpdateManager from './UpdateManager';
 import RulesManager from './RulesManager';
+import BotManager from './BotManager';
 
 class Game {
   constructor() {
@@ -15,6 +16,7 @@ class Game {
     this.rulesManager = new RulesManager();
     this.particleManager = new ParticleManager();
     this.mouseManager = new MouseManager(this.canvas);
+    this.botManager = new BotManager();
 
     this.start = this.start.bind(this);
     this.draw = this.draw.bind(this);

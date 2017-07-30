@@ -1,9 +1,11 @@
-const BASE_ENERGY = 30;
+export const BASE_ENERGY = 30;
 const CIRCUMEFRENCE_POINTS = 32;
 const OFFSET_TURNS = 50;
+const HIGHLIGHT_COLOR = '#FFDC00';
 
 import Entity from '../core/Entity';
-import Shield from './Shield';
+import Shield, { SHIELD_WIDTH, SHIELD_BUFFER } from './Shield';
+import Proton from './Proton';
 import {
   mapTeamToFillColor,
   mapTeamToBorderColor,
@@ -19,9 +21,16 @@ class Cell extends Entity {
     this.energy = BASE_ENERGY;
     this.setTeam(team);
 
-    this.targets = [];
-    this.hasShield = false;
+    this.targets = {};
+    this.shieldId = null;
     this.upgrades = [];
+
+    this.rateOfFire = {
+      index: 50,
+      rate: 50,
+    };
+
+    this.energyPerShot = 0.1;
 
     this.drawPoints = [];
     for (let pointIndex = 0; pointIndex < CIRCUMEFRENCE_POINTS; pointIndex++) {
@@ -31,6 +40,8 @@ class Cell extends Entity {
         turns: { x: 0, y: 0 },
       });
     }
+
+    this.isHighlighted = false;
   }
 
   setTeam(team) {
@@ -39,8 +50,8 @@ class Cell extends Entity {
     this.borderColor = mapTeamToBorderColor(team);
   }
 
-  addTarget(target) {
-    this.targets.push(target);
+  toggleTarget(targetId) {
+    this.targets[targetId] = typeof this.targets[targetId] === 'undefined' ? true : !this.targets[targetId];
   }
 
   applyUpgrade(upgrade) {
@@ -61,6 +72,11 @@ class Cell extends Entity {
 
   getPointOffsetRange() {
     return this.mapEnergyToRadius() * .05;
+  }
+
+  getOuterRadius() {
+    const buffer = SHIELD_WIDTH + SHIELD_BUFFER;
+    return this.mapEnergyToRadius() + buffer;
   }
 
   updateDrawPoints() {
@@ -84,30 +100,57 @@ class Cell extends Entity {
   }
 
   update(game) {
-    if (! this.hasShield ) {
-      game.addEntity(new Shield(this.x, this.y, this));
-      this.hasShield = true;
+    if (this.shieldId === null) {
+      const shield = new Shield(this.x, this.y, this);
+      game.addEntity(shield);
+      this.shieldId = shield.id;
     }
 
     // check energy level
-    //  if energy level <= "20" or something
-    //    break the cell into particles, target closest friendly cells
-    //    if none, game over
+    //  if energy level <= "10" or something
+    //   nuke it
 
-    // check if mouse click occured
-    //  either check if this cell was clicked
-    //  or if its highlighted already, apply the target
+    // check collide with other cells
+    //  if collided
+    //    nuke it
 
-    for (const target of this.targets) {
-      // check if target exists in game world
-      //  fire proton
-      //  deduct energy
+    const hits = game.mouseManager.hits;
+    if (hits.length) {
+      if (hits.includes(this.id)) {
+        this.isHighlighted = !this.isHighlighted;
+      }
+      else if (this.isHighlighted) {
+        for (const hitId of hits) {
+
+          const entity = game.entities[hitId];
+          if (entity.type === 'cell') {
+            this.toggleTarget(entity.id);
+            this.isHighlighted = false;
+          }
+        }
+      }
+    }
+
+    if (Object.keys(this.targets).length) {
+      if (this.rateOfFire.index >= this.rateOfFire.rate) {
+        this.rateOfFire.index = 0;
+
+        for (const targetId of Object.keys(this.targets)) {
+          if (! this.targets[targetId]) continue;
+
+          const proton = new Proton(this.x, this.y, this.team, targetId, this.energyPerShot);
+          game.addEntity(proton);
+          this.subtractEnergy(this.energyPerShot)
+        }
+      }
+
+      this.rateOfFire.index++;
     }
   }
 
   draw(ctx) {
     ctx.fillStyle = this.fillColor;
-    ctx.strokeStyle = this.borderColor;
+    ctx.strokeStyle = this.isHighlighted ? HIGHLIGHT_COLOR : this.borderColor;
     ctx.lineWidth = this.mapEnergyToRadius() / 6;
 
     this.updateDrawPoints();

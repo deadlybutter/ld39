@@ -19,7 +19,7 @@ class RulesManager {
       });
 
       if (totalCells >= SPAWN_CELLS_PER_PLAYER) {
-        // TODO: Tell AI to spawn.
+        game.botManager.spawn(game);
         game.updateManager.changeMode(MODE_PLAY);
       }
     }

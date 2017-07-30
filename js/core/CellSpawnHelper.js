@@ -4,14 +4,12 @@ import { circleCollide } from '../helpers';
 
 export function isSafe(cell, game) {
   let safe = true;
-  const buffer = SHIELD_WIDTH + SHIELD_BUFFER;
-  const baseRadius = cell.mapEnergyToRadius() + buffer;
 
   game.entityIterator((entity) => {
     if (! safe) return;
 
     if (entity.type === 'cell') {
-      const collide = circleCollide(cell.x, cell.y, baseRadius, entity.x, entity.y, entity.mapEnergyToRadius() + buffer);
+      const collide = circleCollide(cell.x, cell.y, cell.getOuterRadius(), entity.x, entity.y, entity.getOuterRadius());
       if (collide) safe = false;
     }
   });
@@ -27,8 +25,8 @@ export function spawn(x, y, team, game) {
 }
 
 export function update(game) {
-  if (game.mouseManager.hits.length) {
-    const hit = game.mouseManager.hits[0];
-    spawn(hit.x, hit.y, 1, game);
+  if (game.mouseManager.clicks.length) {
+    const click = game.mouseManager.clicks[0];
+    spawn(click.x, click.y, 1, game);
   }
 }

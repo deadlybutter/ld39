@@ -14,7 +14,7 @@ class Shield extends Entity {
     this.cell = cell;
     this.resetControl();
 
-    this.rumble = { x: 0, y: 0 };
+    this.rumble = { x: 0, y: 0 }; // TODO?
   }
 
   resetControl() {
@@ -29,10 +29,6 @@ class Shield extends Entity {
 
     this.control[team] += relativeValue;
     this.control[otherTeam(team)] -= relativeValue;
-  }
-
-  rumble() {
-    this.rumble = getRandomVelocity();
   }
 
   getRadius() {

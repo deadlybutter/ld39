@@ -51,3 +51,9 @@ export function circleCollide(x1, y1, r1, x2, y2, r2) {
   const distance = Math.sqrt((dx * dx) + (dy * dy));
   return distance < (r1 + r2);
 }
+
+export function pointCircleCollide(x, y, cx, cy, r) {
+  const dx = x - cx;
+  const dy = y - cy;
+  return (dx * dx) + (dy * dy) <= r * r;
+}

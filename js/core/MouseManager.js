@@ -1,3 +1,5 @@
+import { pointCircleCollide } from '../helpers';
+
 class MouseManager {
   constructor(canvas) {
     this.canvas = canvas;
@@ -6,7 +8,7 @@ class MouseManager {
     canvas.addEventListener('click', (e) => {
       const x = e.offsetX;
       const y = e.offsetY;
-      this.hits.push({ x, y });
+      this.clicks.push({ x, y });
     });
   }
 
@@ -16,8 +18,14 @@ class MouseManager {
   }
 
   update(game) {
-    // go through clicks and check for any hits
-    //
+    game.entityIterator((entity) => {
+      if (entity.type === 'cell') {
+        this.clicks.forEach(point => {
+          const intersects = pointCircleCollide(point.x, point.y, entity.x, entity.y, entity.mapEnergyToRadius());
+          if (intersects) this.hits.push(entity.id);
+        });
+      }
+    });
   }
 }
 
