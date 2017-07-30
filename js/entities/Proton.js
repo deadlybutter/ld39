@@ -2,10 +2,13 @@ const SPEED = .4;
 const LENGTH = 2;
 
 import Entity from '../core/Entity';
+import Particle from '../core/Particle';
 import {
   normalize,
   mapTeamToFillColor,
+  mapTeamToBorderColor,
   pointCircleCollide,
+  otherTeam,
 } from '../helpers';
 
 class Proton extends Entity {
@@ -32,13 +35,19 @@ class Proton extends Entity {
     this.y += direction.y * SPEED;
 
     if (pointCircleCollide(this.x, this.y, target.x, target.y, target.getOuterRadius())) {
-      if (target.team === this.team) target.addEnergy(this.energy);
-      else {
+      if (target.team !== this.team) {
         game.entities[target.shieldId].addControl(this.team, this.energy);
       }
+      else {
+        target.addEnergy(this.energy);
+      }
+
+      const particles = game.particleManager.makeMany(this.x, this.y, 500, 10);
+      game.particleManager.applyEffects(particles, 'color', mapTeamToBorderColor(target.team));
+      game.particleManager.applyEffects(particles, 'speed', 0.5);
+      game.particleManager.applyRangedVelocity(particles, { x: direction.x * -1, y: direction.y * -1 });
 
       game.killEntity(this.id);
-      // TODO: Spawn particles
     }
   }
 

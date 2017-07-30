@@ -28,6 +28,10 @@ export function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+export function getRandomNum(min, max) {
+  return (Math.random() * (max - min + 1)) + min;
+}
+
 export function getRandomVelocity() {
   return { x: getRandomInt(-1, 1), y: getRandomInt(-1, 1) };
 }

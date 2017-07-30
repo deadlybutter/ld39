@@ -1,22 +1,13 @@
 import Entity from './Entity';
 
-import {
-  update as testUpdate,
-  draw as testDraw,
-} from '../particles/Test';
-
-const PARTICLE_MAP = {
-  'test': {
-    update: testUpdate,
-    draw: testDraw,
-  },
-};
-
 class Particle extends Entity {
-  constructor(x, y, lifespan, type) {
+  constructor(x, y, lifespan) {
     super(x, y, 'particle');
+
+    this.direction = { x: 0, y: 0 };
     this.lifespan = lifespan;
-    this.type = type;
+    this.color = '#FFF';
+    this.speed = 0;
 
     this.reset();
   }
@@ -34,11 +25,13 @@ class Particle extends Entity {
       return;
     }
 
-    PARTICLE_MAP[this.type].update.apply(this, [game]);
+    this.x += this.direction.x * this.speed;
+    this.y += this.direction.y * this.speed;
   }
 
   draw(ctx) {
-    PARTICLE_MAP[this.type].draw.apply(this, [ctx]);
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, 1, 1);
   }
 }
 

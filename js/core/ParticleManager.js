@@ -1,6 +1,7 @@
 const INIT_PARTICLES = 10000;
 
 import Particle from './Particle';
+import { normalize, getRandomNum } from '../helpers';
 
 class ParticleManager {
   constructor() {
@@ -25,7 +26,7 @@ class ParticleManager {
   getFree() {
     // If there are no free particles, make a new one
     if (! this.freeStack.length) {
-      const particle = new Particle(0, 0, 1000);
+      const particle = new Particle(0, 0);
       const index = this.particles.push(particle) - 1;
       this.reference[particle.id] = index;
 
@@ -37,16 +38,42 @@ class ParticleManager {
     return this.particles[freeIndex];
   }
 
-  makeParticle(x, y, lifespan, type) {
+  makeParticle(x, y, lifespan) {
     const particle = this.getFree();
 
     particle.x = x;
     particle.y = y;
     particle.lifespan = lifespan;
-    particle.type = type;
     particle.reset();
 
     return particle;
+  }
+
+  makeMany(x, y, lifespan, total) {
+    const particles = [];
+
+    for (let index = 0; index < total; index++) {
+      particles.push(this.makeParticle(x, y, lifespan));
+    }
+
+    return particles;
+  }
+
+  applyEffects(particles, key, value) {
+    for (const particle of particles) {
+      particle[key] = value;
+    }
+  }
+
+  applyRangedVelocity(particles, direction) {
+    for (const particle of particles) {
+      const newDir = {
+        x: direction.x + getRandomNum(-1, 1),
+        y: direction.y + getRandomNum(-1, 1),
+      };
+
+      particle.direction = normalize(newDir);
+    }
   }
 
   setFree(id) {

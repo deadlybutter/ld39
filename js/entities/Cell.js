@@ -12,6 +12,7 @@ import {
   clamp,
   getRandomVelocity,
   getRandomInt,
+  circleCollide,
 } from '../helpers';
 
 class Cell extends Entity {
@@ -97,6 +98,26 @@ class Cell extends Entity {
     }
   }
 
+  nuke(game) {
+    game.killEntity(this.id);
+
+    const makeNukeParticles = (x, y, total, speed) => {
+      const particles = game.particleManager.makeMany(x, y, 3500, total);
+      game.particleManager.applyEffects(particles, 'color', '#FF851B');
+      game.particleManager.applyEffects(particles, 'speed', speed);
+      game.particleManager.applyRangedVelocity(particles, { x: 0, y: 0 });
+    };
+
+    makeNukeParticles(this.x, this.y, this.energy * 4, 0.4);
+
+    for (let index = 0; index < CIRCUMEFRENCE_POINTS; index++) {
+      const { px, py } = this.getPointPosition(index);
+      makeNukeParticles(px, py, this.energy * 2, 0.6);
+    }
+
+    game.killEntity(this.shieldId);
+  }
+
   update(game) {
     if (this.shieldId === null) {
       const shield = new Shield(this.x, this.y, this);
@@ -104,19 +125,27 @@ class Cell extends Entity {
       this.shieldId = shield.id;
     }
 
-    // check energy level
-    //  if energy level <= "10" or something
-    //   nuke it
+    if (this.energy <= 2) {
+      this.nuke(game);
+      return;
+    }
 
-    // check collide with other cells
-    //  if collided
-    //    nuke it
+    let cellCollided = false;
+    game.entityIterator((entity) => {
+      if (cellCollided || entity.type !== 'cell' || this.id === entity.id) return;
+      if (circleCollide(this.x, this.y, this.getOuterRadius() - 2, entity.x, entity.y, entity.getOuterRadius() - 2)) {
+        this.nuke(game);
+        entity.nuke(game);
+        cellCollided = true;
+      }
+    });
+    if (cellCollided) return;
 
     const hits = game.mouseManager.hits;
     const isHighlighted = game.highlightedCell === this.id;
 
     if (hits.length) {
-      if (hits.includes(this.id)) {
+      if (hits.includes(this.id) && this.team === 1) {
         if (game.highlightedCell === null) game.setHighlightedCell(this.id);
         else if (isHighlighted) game.setHighlightedCell(null);
       }
@@ -149,6 +178,18 @@ class Cell extends Entity {
     }
   }
 
+  getPointPosition(index) {
+    const { offset } = this.drawPoints[index];
+
+    const radius = this.mapEnergyToRadius();
+    const radian = 2 * Math.PI * index / CIRCUMEFRENCE_POINTS;
+
+    const px = (this.x + (radius * Math.cos(radian))) + offset.x;
+    const py = this.y + (radius * Math.sin(radian)) + offset.y;
+
+    return { px, py };
+  }
+
   draw(ctx, game) {
     ctx.fillStyle = this.fillColor;
     ctx.strokeStyle = game.highlightedCell === this.id ? HIGHLIGHT_COLOR : this.borderColor;
@@ -158,26 +199,14 @@ class Cell extends Entity {
 
     ctx.beginPath();
 
-    const getPointPosition = (index) => {
-      const { offset } = this.drawPoints[index];
-
-      const radius = this.mapEnergyToRadius();
-      const radian = 2 * Math.PI * index / CIRCUMEFRENCE_POINTS;
-
-      const px = (this.x + (radius * Math.cos(radian))) + offset.x;
-      const py = this.y + (radius * Math.sin(radian)) + offset.y;
-
-      return { px, py };
-    }
-
     for (let index = 0; index < CIRCUMEFRENCE_POINTS; index++) {
-      const { px, py } = getPointPosition(index);
+      const { px, py } = this.getPointPosition(index);
 
       index === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
 
       // Close the circle
       if (index === CIRCUMEFRENCE_POINTS - 1) {
-        const start = getPointPosition(0);
+        const start = this.getPointPosition(0);
         ctx.lineTo(start.px, start.py);
       }
     }

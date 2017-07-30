@@ -39,7 +39,7 @@ class Shield extends Entity {
       outer: inner + SHIELD_WIDTH,
     };
   }
-
+  
   update(game) {
     if (this.control[this.cell.team] <= 0) {
       this.cell.setTeam(otherTeam(this.cell.team));
