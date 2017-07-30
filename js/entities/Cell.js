@@ -53,6 +53,16 @@ class Cell extends Entity {
     this.targets[targetId] = typeof this.targets[targetId] === 'undefined' ? true : !this.targets[targetId];
   }
 
+  target(targetId) {
+    this.targets[targetId] = true;
+  }
+
+  clearTargets() {
+    for (const targetId of Object.keys(this.targets)) {
+      this.targets[targetId] = false;
+    }
+  }
+
   applyUpgrade(upgrade) {
     this.upgrades.push(upgrade);
   }

@@ -323,7 +323,9 @@ var UpdateManager = function () {
     }
   }, {
     key: 'endUpdate',
-    value: function endUpdate(game) {}
+    value: function endUpdate(game) {
+      alert('Game over!');
+    }
   }, {
     key: 'update',
     value: function update(game) {
@@ -483,6 +485,39 @@ var Cell = function (_Entity) {
       this.targets[targetId] = typeof this.targets[targetId] === 'undefined' ? true : !this.targets[targetId];
     }
   }, {
+    key: 'target',
+    value: function target(targetId) {
+      this.targets[targetId] = true;
+    }
+  }, {
+    key: 'clearTargets',
+    value: function clearTargets() {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = Object.keys(this.targets)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var targetId = _step.value;
+
+          this.targets[targetId] = false;
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }, {
     key: 'applyUpgrade',
     value: function applyUpgrade(upgrade) {
       this.upgrades.push(upgrade);
@@ -521,13 +556,13 @@ var Cell = function (_Entity) {
       for (var index = 0; index < this.drawPoints.length; index++) {
         var point = this.drawPoints[index];
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
 
         try {
-          for (var _iterator = dimensions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var d = _step.value;
+          for (var _iterator2 = dimensions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var d = _step2.value;
 
             var velocity = point.velocity[d] * (point.turns[d] / (OFFSET_TURNS * 10));
             var range = this.getPointOffsetRange();
@@ -540,16 +575,16 @@ var Cell = function (_Entity) {
             }
           }
         } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+              _iterator2.return();
             }
           } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
+            if (_didIteratorError2) {
+              throw _iteratorError2;
             }
           }
         }
@@ -613,13 +648,13 @@ var Cell = function (_Entity) {
         if (hits.includes(this.id) && this.team === 1) {
           if (game.highlightedCell === null) game.setHighlightedCell(this.id);else if (isHighlighted) game.setHighlightedCell(null);
         } else if (isHighlighted) {
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
 
           try {
-            for (var _iterator2 = hits[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var hitId = _step2.value;
+            for (var _iterator3 = hits[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var hitId = _step3.value;
 
 
               var entity = game.entities[hitId];
@@ -627,41 +662,6 @@ var Cell = function (_Entity) {
                 this.toggleTarget(entity.id);
                 game.setHighlightedCell(null);
               }
-            }
-          } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
-            }
-          }
-        }
-      }
-
-      if (Object.keys(this.targets).length) {
-        if (this.rateOfFire.index >= this.rateOfFire.rate) {
-          this.rateOfFire.index = 0;
-
-          var _iteratorNormalCompletion3 = true;
-          var _didIteratorError3 = false;
-          var _iteratorError3 = undefined;
-
-          try {
-            for (var _iterator3 = Object.keys(this.targets)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-              var targetId = _step3.value;
-
-              if (!this.targets[targetId]) continue;
-
-              var proton = new _Proton2.default(this.x, this.y, this.team, targetId, this.energyPerShot);
-              game.addEntity(proton);
-              this.subtractEnergy(this.energyPerShot);
             }
           } catch (err) {
             _didIteratorError3 = true;
@@ -674,6 +674,41 @@ var Cell = function (_Entity) {
             } finally {
               if (_didIteratorError3) {
                 throw _iteratorError3;
+              }
+            }
+          }
+        }
+      }
+
+      if (Object.keys(this.targets).length) {
+        if (this.rateOfFire.index >= this.rateOfFire.rate) {
+          this.rateOfFire.index = 0;
+
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
+
+          try {
+            for (var _iterator4 = Object.keys(this.targets)[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              var targetId = _step4.value;
+
+              if (!this.targets[targetId]) continue;
+
+              var proton = new _Proton2.default(this.x, this.y, this.team, targetId, this.energyPerShot);
+              game.addEntity(proton);
+              this.subtractEnergy(this.energyPerShot);
+            }
+          } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
+              }
+            } finally {
+              if (_didIteratorError4) {
+                throw _iteratorError4;
               }
             }
           }
@@ -1425,6 +1460,20 @@ var RulesManager = function () {
         }
       }
       // end rule //
+
+      // Rule: If all cells are a single team, game over
+      if (currentMode === _UpdateManager.MODE_PLAY) {
+        var hasTeamOne = false;
+        game.entityIterator(function (e) {
+          if (hasTeamOne) return;
+          if (e.type === 'cell' && e.team === 1) hasTeamOne = true;
+        });
+
+        if (!hasTeamOne) {
+          game.updateManager.changeMode(_UpdateManager.MODE_END);
+        }
+      }
+      // end rule //
     }
   }]);
 
@@ -1456,11 +1505,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var TICKS_PER_LOGIC = 100;
+
 var BotManager = function () {
   function BotManager() {
     _classCallCheck(this, BotManager);
 
     this.bots = [];
+
+    this.logicTick = 0;
   }
 
   _createClass(BotManager, [{
@@ -1488,8 +1541,124 @@ var BotManager = function () {
       }
     }
   }, {
+    key: 'setTargets',
+    value: function setTargets(bot, game) {
+      var cells = [];
+      game.entityIterator(function (entity) {
+        if (entity.type === 'cell' && entity.id !== bot.id) cells.push(entity);
+      });
+
+      var ranks = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = cells[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var cell = _step.value;
+
+          // Get distance between
+          var distance = Math.abs(bot.x - cell.x) + Math.abs(bot.y - cell.y);
+          var distanceRank = distance / 100;
+
+          // Prefer enemy team
+          var teamRank = cell.team === bot.team ? 10 : 0;
+
+          // Prefer lower shields
+          var shieldControl = game.entities[cell.shieldId].control[bot.team];
+          var shieldRank = 10 - shieldControl * 10;
+
+          // Prefer higher energy cells
+          var energyRank = 10 - cell.energy / 10;
+
+          var rank = distanceRank + teamRank + shieldRank + energyRank;
+
+          // console.log({rank, distanceRank, teamRank, shieldRank, energyRank});
+          ranks.push({ rank: rank, cell: cell });
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      ranks.sort(function (a, b) {
+        return a.rank - b.rank;
+      });
+
+      var targets = [ranks[0].cell.id];
+      if (bot.energy > _Cell.BASE_ENERGY) {
+        targets.push(ranks[1].cell.id);
+      }
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = targets[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var targetId = _step2.value;
+
+          bot.target(targetId);
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+    }
+  }, {
     key: 'update',
-    value: function update(game) {}
+    value: function update(game) {
+      this.logicTick++;
+      if (this.logicTick < TICKS_PER_LOGIC) return;
+
+      this.logicTick = 0;
+
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = this.bots[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var bot = _step3.value;
+
+          bot.clearTargets();
+          this.setTargets(bot, game);
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+    }
   }]);
 
   return BotManager;

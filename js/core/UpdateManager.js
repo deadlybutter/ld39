@@ -31,7 +31,7 @@ class UpdateManager {
   }
 
   endUpdate(game) {
-
+    alert('Game over!');
   }
 
   update(game) {
