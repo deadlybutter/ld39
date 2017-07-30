@@ -1068,6 +1068,16 @@ var Game = function () {
       ctx.fillStyle = '#FFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      // quick hack cause lazy
+      if (this.updateManager.mode === _UpdateManager.MODE_SETUP) {
+        ctx.fillStyle = '#111';
+        ctx.font = 'normal 108px VT323';
+        ctx.fillText('Atomic Cells', canvas.width / 4, canvas.height * .50);
+
+        ctx.font = 'normal 64px Arvo';
+        ctx.fillText('Instructions below', 215, canvas.height * .75);
+      }
+
       // Render
       this.entityIterator(function (entity) {
         return entity.draw(ctx, _this);
