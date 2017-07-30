@@ -11,6 +11,10 @@ p {
   color: #111;
 }
 
+img {
+  max-width: 100%;
+}
+
 .wrapper {
   background-color: #fafdff;
   height: 98vh;

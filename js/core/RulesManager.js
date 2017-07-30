@@ -21,15 +21,18 @@ class RulesManager {
     }
     // end rule //
 
-    // Rule: If all cells are a single team, game over
+    // Rule: If any team has no cells left, game over.
     if (currentMode === MODE_PLAY) {
-      let hasTeamOne = false;
+      let team1Total = 0;
+      let team2Total = 0;
+
       game.entityIterator(e => {
-        if (hasTeamOne) return;
-        if (e.type === 'cell' && e.team === 1) hasTeamOne = true;
+        if (e.type === 'cell') {
+          e.team === 1 ? team1Total++ : team2Total++;
+        }
       });
 
-      if (! hasTeamOne) {
+      if (team1Total === 0 || team2Total === 0) {
         game.updateManager.changeMode(MODE_END);
       }
     }

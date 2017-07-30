@@ -5,7 +5,6 @@ import { isSafe } from './CellSpawnHelper';
 
 class BotManager {
   constructor() {
-    this.bots = [];
 
     this.logicTick = 0;
   }
@@ -22,14 +21,15 @@ class BotManager {
       }
     }
 
-    while (this.bots.length < 4) {
+    let spawned = 0;
+    while (spawned < 4) {
       const pickIndex = Math.floor(Math.random() * bots.length);
       const pick = bots.splice(pickIndex, 1)[0];
       if (! pick) break;
       if (! isSafe(pick, game)) continue;
 
-      this.bots.push(pick);
       game.addEntity(pick);
+      spawned++;
     }
   }
 
@@ -57,7 +57,6 @@ class BotManager {
 
       const rank = distanceRank + teamRank + shieldRank + energyRank;
 
-      // console.log({rank, distanceRank, teamRank, shieldRank, energyRank});
       ranks.push({ rank, cell });
     }
 
@@ -81,7 +80,14 @@ class BotManager {
 
     this.logicTick = 0;
 
-    for (const bot of this.bots) {
+    const bots = [];
+    game.entityIterator(entity => {
+      if (entity.type === 'cell' && entity.team === 2) {
+        bots.push(entity);
+      }
+    });
+
+    for (const bot of bots) {
       bot.clearTargets();
       this.setTargets(bot, game);
     }

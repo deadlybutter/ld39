@@ -1,6 +1,7 @@
 export const MODE_SETUP = 'MODE_SETUP';
 export const MODE_PLAY = 'MODE_PLAY';
 export const MODE_END = 'MODE_END';
+export const MODE_STOP = 'MODE_STOP';
 
 import { update as cellSpawnUpdate } from './CellSpawnHelper';
 
@@ -32,6 +33,7 @@ class UpdateManager {
 
   endUpdate(game) {
     alert('Game over!');
+    this.changeMode(MODE_STOP);
   }
 
   update(game) {

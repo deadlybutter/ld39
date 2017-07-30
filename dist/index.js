@@ -275,7 +275,7 @@ exports.default = Particle;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.MODE_END = exports.MODE_PLAY = exports.MODE_SETUP = undefined;
+exports.MODE_STOP = exports.MODE_END = exports.MODE_PLAY = exports.MODE_SETUP = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -286,6 +286,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var MODE_SETUP = exports.MODE_SETUP = 'MODE_SETUP';
 var MODE_PLAY = exports.MODE_PLAY = 'MODE_PLAY';
 var MODE_END = exports.MODE_END = 'MODE_END';
+var MODE_STOP = exports.MODE_STOP = 'MODE_STOP';
 
 var UpdateManager = function () {
   function UpdateManager() {
@@ -325,6 +326,7 @@ var UpdateManager = function () {
     key: 'endUpdate',
     value: function endUpdate(game) {
       alert('Game over!');
+      this.changeMode(MODE_STOP);
     }
   }, {
     key: 'update',
@@ -1461,15 +1463,18 @@ var RulesManager = function () {
       }
       // end rule //
 
-      // Rule: If all cells are a single team, game over
+      // Rule: If any team has no cells left, game over.
       if (currentMode === _UpdateManager.MODE_PLAY) {
-        var hasTeamOne = false;
+        var team1Total = 0;
+        var team2Total = 0;
+
         game.entityIterator(function (e) {
-          if (hasTeamOne) return;
-          if (e.type === 'cell' && e.team === 1) hasTeamOne = true;
+          if (e.type === 'cell') {
+            e.team === 1 ? team1Total++ : team2Total++;
+          }
         });
 
-        if (!hasTeamOne) {
+        if (team1Total === 0 || team2Total === 0) {
           game.updateManager.changeMode(_UpdateManager.MODE_END);
         }
       }
@@ -1511,8 +1516,6 @@ var BotManager = function () {
   function BotManager() {
     _classCallCheck(this, BotManager);
 
-    this.bots = [];
-
     this.logicTick = 0;
   }
 
@@ -1530,14 +1533,15 @@ var BotManager = function () {
         }
       }
 
-      while (this.bots.length < 4) {
+      var spawned = 0;
+      while (spawned < 4) {
         var pickIndex = Math.floor(Math.random() * bots.length);
         var pick = bots.splice(pickIndex, 1)[0];
         if (!pick) break;
         if (!(0, _CellSpawnHelper.isSafe)(pick, game)) continue;
 
-        this.bots.push(pick);
         game.addEntity(pick);
+        spawned++;
       }
     }
   }, {
@@ -1573,7 +1577,6 @@ var BotManager = function () {
 
           var rank = distanceRank + teamRank + shieldRank + energyRank;
 
-          // console.log({rank, distanceRank, teamRank, shieldRank, energyRank});
           ranks.push({ rank: rank, cell: cell });
         }
       } catch (err) {
@@ -1633,12 +1636,19 @@ var BotManager = function () {
 
       this.logicTick = 0;
 
+      var bots = [];
+      game.entityIterator(function (entity) {
+        if (entity.type === 'cell' && entity.team === 2) {
+          bots.push(entity);
+        }
+      });
+
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator3 = this.bots[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        for (var _iterator3 = bots[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
           var bot = _step3.value;
 
           bot.clearTargets();

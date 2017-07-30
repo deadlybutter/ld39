@@ -7,30 +7,54 @@
   <body>
     <div class="wrapper -gradient">
       <div class="container -vertical-center">
+        <h1 id="warning">This game is designed for desktop only!</h1>
         <canvas id="canvas" width="960" height="540">Yikes, your browser is really old! Upgrade it to play this game.</canvas>
       </div>
     </div>
 
     <div class="wrapper">
       <div class="container">
-        <h1>#ld39</h1>
-        <p>This is a work in progress</p>
+        <h1>deciding on a name</h1>
+        <h3>#ld39 (Running out of Power)</h3>
+        <p>In (deciding on a name) you must outwit the enemy and overpower them before you run out of energy.</p>
+
+        <h3>pre-game</h3>
+        <p>Before the game starts, you will place four energy cells anywhere on the map.</p>
+        <img src="./docs/placement.gif" />
+
+        <h3>basic gameplay</h3>
+        <p>Every energy cell can fire protons at other energy cells, and every proton fired will drain some of its energy.</p>
+        <p>If the proton is targetting a friendly cell, it will transfer the energy. If its targeting an enemy cell, it will damage the shield surrounding the cell. If the shield goes down, the cell will belong the other team.</p>
+        <img src="./docs/gameplay.gif" />
+
+        <h3>winning</h3>
+        <p>In order to win the game, you must remove all enemy cells from the map. You can do this by either gaining control of them all, or having them run out of energy and explode.</p>
+        <img src="./docs/win.png" />
       </div>
     </div>
 
     <script src="./dist/index.js"></script>
     <script>
+      let warning = null;
+      let canvas = null;
+
       function checkSize() {
         if (window.innerWidth < 960) {
-          console.log("This game is designed for desktop only!");
+          warning.style.display = 'block';
+          canvas.style.display = 'none';
           return;
         }
 
+        canvas.style.display = 'block';
+        warning.style.display = 'none';
         window.removeEventListener('resize', checkSize);
         startGame();
       }
 
       (function() {
+        warning = document.getElementById('warning');
+        canvas = document.getElementById('canvas');
+
         window.addEventListener('resize', checkSize);
         checkSize();
       })();
